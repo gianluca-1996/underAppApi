@@ -12,7 +12,8 @@ class UserService{
             _id: response._id, 
             usuario: response.usuario, 
             email: response.email, 
-            foto_perfil: response.foto_perfil
+            foto_perfil: response.foto_perfil,
+            roles: response.roles
         }
         //crea token
         const token = generateToken(user);
@@ -32,7 +33,7 @@ class UserService{
             usuario: data.usuario, 
             email: data.email, 
             password: hash,
-            rol: data.rol,
+            roles: data.roles,
             localidad: data.localidad,
             edad: data.edad
         });
@@ -56,6 +57,14 @@ class UserService{
         const response = await userDao.getUserById(id);
         if(!response) return ({status: 404, payload: 'el id ingresado no existe'});
         return ({status: 200, payload: new UserDto(response)});
+    };
+
+    async deleteUserById(id){
+        const userToDelete = await userDao.getUserById(id);
+        if(!userToDelete) return ({status: 404, payload: 'El usuario a eliminar no existe'});
+        const deletedUser = await userDao.deleteUserById(id);
+        if(deletedUser.deletedCount !== 1) return ({status: 404, payload: 'La eliminacion del usuario ha fallado'});
+        return ({status: 200, payload: 'Usuario eliminado con éxito'});
     };
 }
 

@@ -3,7 +3,7 @@ class UserDto{
         this._id = user._id,
         this.usuario = user.usuario,
         this.email = user.email,
-        this.rol = user.rol,
+        this.roles = user.roles,
         this.localidad = user.localidad,
         this.seguidos = user.seguidos,
         this.seguidores = user.seguidores,

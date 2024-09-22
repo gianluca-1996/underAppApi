@@ -16,6 +16,10 @@ class UserDao{
     async getUserById(id){
         return await userModel.findById(id);
     };
+
+    async deleteUserById(id){
+        return await userModel.deleteOne({_id: id});
+    };
 }
 
 export default new UserDao();

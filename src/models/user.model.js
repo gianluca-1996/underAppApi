@@ -5,7 +5,7 @@ const userCollection = 'Usuario';
 const userSchema = new mongoose.Schema({
     usuario: {type: String, required: true, unique: true},
     email: {type: String, required: true, unique: true} ,
-    rol: {type: String, required: true},
+    roles: {type: Array, required: true},
     password: {type: String, required: true},
     foto_perfil: String,
     foto_portada: String,
