@@ -16,8 +16,6 @@ class UserController{
     async createUser(req, res){
         if(!req.body.email) return res.status(400).send('Debe completar el email');
         if(!req.body.password) return res.status(400).send('Debe completar el password');
-        if(!req.body.roles) return res.status(400).send('Debe completar el rol');
-        if(!Array.isArray(req.body.roles)) return res.status(400).send('Los roles del usuario deben estar indicados dentro de un array. Ejemplo: [\'competidor\']');
         if(!req.body.usuario) return res.status(400).send('Debe completar el usuario');
         if(!req.body.localidad) return res.status(400).send('Debe completar la localidad');
         if(!req.body.edad) return res.status(400).send('Debe completar la edad');
@@ -52,7 +50,7 @@ class UserController{
     async getUserById(req, res){
         //if(!req.params.id) return res.status(400).send('Debe completar el email');
         try {
-            const response = await userService.getUserById(req.user._id);
+            const response = await userService.getUserById(req.params._id);
             return res.status(response.status).json(response.payload);
         } catch (error) {
             return res.status(500).send(error.message);
@@ -68,6 +66,24 @@ class UserController{
             return res.status(500).send(error.message);
         }
     };
+
+    async getPosteos(req, res){
+        try {
+            const response = await userService.getPosteos(req.user._id);
+            res.status(response.status).json(response.payload);
+        } catch (error) {
+            return res.status(500).send(error.message);
+        }
+    }
+
+    getUserByToken(req, res){
+        try {
+            const response = userService.getUserByToken(req.params.token);
+            res.status(response.status).json(response.payload);
+        } catch (error) {
+            return res.status(500).send(error.message);
+        }
+    }
 } 
 
 export default new UserController();

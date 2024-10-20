@@ -20,6 +20,12 @@ class UserDao{
     async deleteUserById(id){
         return await userModel.deleteOne({_id: id});
     };
+
+    async asociarPost(idUser, idPost, session){
+        return await userModel.updateOne({_id: idUser}, {$push: {posteos: {posteo: idPost}}}, {session});
+    }
+
+    async getPosteos(id){ return await userModel.findById(id).populate('posteos.posteo') };
 }
 
 export default new UserDao();

@@ -1,5 +1,6 @@
 import userDao from "../daos/user.dao.js";
 import { generateToken } from "../middlewares/auth.js";
+import verifyToken from "../utils.js";
 import bcrypt from 'bcrypt';
 import UserDto from "../dtos/user.dto.js";
 
@@ -33,11 +34,11 @@ class UserService{
             usuario: data.usuario, 
             email: data.email, 
             password: hash,
-            roles: data.roles,
             localidad: data.localidad,
-            edad: data.edad
+            edad: data.edad,
+            foto_perfil: data.foto_perfil && data.foto_perfil
         });
-        return ({status: 200, payload: new UserDto(response)});
+        return ({status: 201, payload: new UserDto(response)});
     };
 
     async getAllUsers(){
@@ -65,6 +66,17 @@ class UserService{
         const deletedUser = await userDao.deleteUserById(id);
         if(deletedUser.deletedCount !== 1) return ({status: 404, payload: 'La eliminacion del usuario ha fallado'});
         return ({status: 200, payload: 'Usuario eliminado con éxito'});
+    };
+
+    async getPosteos(id){
+        const response = await userDao.getPosteos(id);
+        return ({status: 200, payload: response.posteos});
+    }
+
+    getUserByToken(token){
+        const response = verifyToken(token);
+        if(!response) return ({status: 401, payload: 'el token ingresado no es válido'});
+        return ({status: 200, payload: response});
     };
 }
 

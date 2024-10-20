@@ -7,10 +7,10 @@ const generateToken = (user) => {
 
 const authToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    if(!authHeader) return res.status(400).send('No esta autenticado');
+    if(!authHeader) return res.status(401).send('No esta autenticado. Token inexistente');
     const token = authHeader.split(' ')[1];
     jwt.verify(token, process.env.JWT_PRIVATE_KEY, (error, credentials) => {
-        if(error) return res.status(400).send('No esta autenticado');
+        if(error) return res.status(401).send('No esta autenticado. Token inválido');
         req.user = credentials.user;
         next();
     })
