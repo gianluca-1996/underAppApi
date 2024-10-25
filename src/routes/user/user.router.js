@@ -10,6 +10,6 @@ userRouter.get('/getUserByEmail/:email', authToken, userController.getUserByEmai
 userRouter.get('/getUserById/:_id', authToken, userController.getUserById);
 userRouter.delete('/delete/:id', authToken, authorization(['admin']), userController.deleteUserById);
 userRouter.get('/getPosteos', authToken, userController.getPosteos);
-userRouter.get('/getUserByToken/:token', userController.getUserByToken);
+userRouter.get('/getUserByToken', authToken, userController.getUserByToken);
 
 export default userRouter;

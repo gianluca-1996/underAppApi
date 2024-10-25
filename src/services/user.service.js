@@ -72,12 +72,6 @@ class UserService{
         const response = await userDao.getPosteos(id);
         return ({status: 200, payload: response.posteos});
     }
-
-    getUserByToken(token){
-        const response = verifyToken(token);
-        if(!response) return ({status: 401, payload: 'el token ingresado no es válido'});
-        return ({status: 200, payload: response});
-    };
 }
 
 export default new UserService();

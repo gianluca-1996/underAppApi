@@ -78,8 +78,7 @@ class UserController{
 
     getUserByToken(req, res){
         try {
-            const response = userService.getUserByToken(req.params.token);
-            res.status(response.status).json(response.payload);
+            res.json({payload: req.user});
         } catch (error) {
             return res.status(500).send(error.message);
         }

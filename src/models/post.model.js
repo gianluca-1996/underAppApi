@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 const coleccionPost = 'Post';
 
@@ -9,6 +10,8 @@ const postSchema = new mongoose.Schema({
     created_dt: {type: Date, required: true},
     created_id: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'}
 });
+
+postSchema.plugin(mongoosePaginate);
 
 const postModel = mongoose.model(coleccionPost, postSchema);
 export default postModel;

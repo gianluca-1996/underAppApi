@@ -19,8 +19,8 @@ class PostService{
         }
     }
 
-    async getPosts(){
-        const response = await postDao.getPosts();
+    async getPosts(page){
+        const response = await postDao.getPosts(page);
         return {status: 200, payload: response};
     }
 }
