@@ -1,6 +1,5 @@
 import userDao from "../daos/user.dao.js";
 import { generateToken } from "../middlewares/auth.js";
-import verifyToken from "../utils.js";
 import bcrypt from 'bcrypt';
 import UserDto from "../dtos/user.dto.js";
 
@@ -67,11 +66,6 @@ class UserService{
         if(deletedUser.deletedCount !== 1) return ({status: 404, payload: 'La eliminacion del usuario ha fallado'});
         return ({status: 200, payload: 'Usuario eliminado con éxito'});
     };
-
-    async getPosteos(id){
-        const response = await userDao.getPosteos(id);
-        return ({status: 200, payload: response.posteos});
-    }
 }
 
 export default new UserService();

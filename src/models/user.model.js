@@ -12,10 +12,9 @@ const userSchema = new mongoose.Schema({
     seguidos: [{type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'}],
     seguidores: [{type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'}],
     //eventos_participados: []
-    posteos: {type: [ { posteo:{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' } } ], default: []},
     puntaje: {type: Number, default: 0},
     edad: {type: Number, required: true},
-    created_at: {type: Date, default: Date.now()}
+    created_dt: {type: Date, default: Date.now()}
 });
 
 const userModel = mongoose.model(userCollection, userSchema);

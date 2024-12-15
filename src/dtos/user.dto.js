@@ -10,7 +10,7 @@ class UserDto{
         this.foto_portada = user.foto_portada,
         this.puntaje = user.puntaje,
         this.edad = user.edad,
-        this.created_at = user.created_at,
+        this.created_dt = user.created_dt,
         this.posteos = user.posteos
     }
 };
