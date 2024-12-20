@@ -5,8 +5,8 @@ import userDao from "../daos/user.dao.js";
 class PostService{
     async nuevoPost(idUser, texto){
         try {
-            const user = await userDao.getUserById(idUser);
-            return {status: 201, payload: await postDao.nuevoPost({texto: texto, created_dt: Date(), created_id: idUser})};
+            await postDao.nuevoPost({texto: texto, created_dt: Date(), created_id: idUser});
+            return {status: 201, payload: 'Post agregado'};
         } catch (error) {
             throw new Error(error.message);
         }
