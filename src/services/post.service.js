@@ -1,15 +1,10 @@
 import PostDto from "../dtos/post.dto.js";
 import postDao from "../daos/post.dao.js";
-import userDao from "../daos/user.dao.js";
 
 class PostService{
-    async nuevoPost(idUser, texto){
-        try {
-            await postDao.nuevoPost({texto: texto, created_dt: Date(), created_id: idUser});
-            return {status: 201, payload: 'Post agregado'};
-        } catch (error) {
-            throw new Error(error.message);
-        }
+    async nuevoPost(idUser, texto){        
+        await postDao.nuevoPost({texto: texto, created_dt: Date(), created_id: idUser});
+        return {status: 201, payload: 'Post agregado'};
     }
 
     async getPosts(page){

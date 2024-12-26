@@ -1,10 +1,13 @@
 import express from 'express';
-import userRouter from '../routes/user/user.router.js'
+import userRouter from './user/user.router.js'
 import postRouter from './post/post.router.js';
+import pantallaRouter from './pantalla/pantalla.router.js'
+
 const mainRouter = express.Router();
 
 
 mainRouter.use('/user', userRouter);
 mainRouter.use('/post', postRouter);
+mainRouter.use('/pantalla', pantallaRouter);
 
 export default mainRouter;

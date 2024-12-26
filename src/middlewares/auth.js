@@ -18,10 +18,7 @@ const authToken = (req, res, next) => {
 
 const authorization = policies => {
     return (req, res, next) => {
-        const rolesUsuario = req.user.roles;
-        //if(!policies.includes(req.user.rol)) return res.status(401).send('No posee permisos para acceder a este recurso');
-        if(!policies.some(policeRole => rolesUsuario.includes(policeRole))) 
-            return res.status(401).send('No posee permisos para acceder a este recurso');
+        if(!policies.includes(req.user.rol)) return res.status(401).send('No posee permisos para acceder a este recurso');
         next();
     }
 }

@@ -13,7 +13,7 @@ class UserService{
             usuario: response.usuario, 
             email: response.email, 
             foto_perfil: response.foto_perfil,
-            roles: response.roles
+            rol: response.rol
         }
         //crea token
         const token = generateToken(user);

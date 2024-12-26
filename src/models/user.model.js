@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     //eventos_participados: []
     puntaje: {type: Number, default: 0},
     edad: {type: Number, required: true},
+    rol: {type: String, require: true, default: 'basico'},
     created_dt: {type: Date, default: Date.now()}
 });
 
