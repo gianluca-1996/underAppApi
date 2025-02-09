@@ -68,6 +68,17 @@ class PostController{
             res.status(500).json(error.message);
         }
     }
+
+    async getPostPropios(req, res){
+        try {
+            let page = req.query.page;
+            if(!page) page = 1;
+            const response = await postService.getPostPropios(page, req.user._id);
+            res.status(response.status).json(response.payload);
+        } catch (error) {
+            res.status(500).json(error.message);
+        }
+    }
 }
 
 export default new PostController();

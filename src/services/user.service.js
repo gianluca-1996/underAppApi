@@ -50,13 +50,13 @@ class UserService{
     async getUserByEmail(email){
         const response = await userDao.getUserByEmail(email);
         if(!response) return ({status: 404, payload: 'el email ingresado no existe'});
-        return ({status: 200, payload: new UserDto(response)});
+        return ({status: 200, payload: response});
     };
 
     async getUserById(id){
         const response = await userDao.getUserById(id);
         if(!response) return ({status: 404, payload: 'el id ingresado no existe'});
-        return ({status: 200, payload: new UserDto(response)});
+        return ({status: 200, payload: response});
     };
 
     async deleteUserById(id){

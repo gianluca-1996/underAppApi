@@ -35,7 +35,11 @@ class PostDao{
 
     async eliminaPost(postId){
         return await postModel.findByIdAndDelete(postId);
-    }    
+    }
+
+    async getPostPropios(page, userId){ 
+        return await postModel.paginate(userId ? {created_id: userId} : {}, {limit: 3, page, sort: {created_dt: -1}, populate: {path: 'comentarios.usuario', select: '_id usuario foto_perfil'} });
+    };
 }
 
 export default new PostDao();

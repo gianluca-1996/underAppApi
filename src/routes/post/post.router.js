@@ -10,5 +10,6 @@ postRouter.post('/agregaMeGusta', authToken, postController.agregarMeGusta);
 postRouter.delete('/eliminaMeGusta/:postId', authToken, postController.eliminaMeGusta);
 postRouter.get('/reacciones/:postId',  authToken, postController.getReacciones);
 postRouter.delete('/eliminaPost/:postId', authToken, postController.eliminaPost);
+postRouter.get('/propios', authToken, postController.getPostPropios);
 
 export default postRouter;

@@ -34,6 +34,10 @@ class PostService{
         if(!response) return {status: 400, payload: 'Post no encontrado'};
         return {status: 200, payload: 'Post eliminado'};
     }
+
+    async getPostPropios(page, userId){
+        return {status: 200, payload: await postDao.getPostPropios(page, userId)};
+    }
 }
 
 export default new PostService();
