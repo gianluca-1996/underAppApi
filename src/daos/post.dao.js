@@ -4,7 +4,10 @@ class PostDao{
     async nuevoPost(post){ return await postModel.create(post) };
     
     async getPosts(page){ 
-        return await postModel.paginate({}, {limit: 3, page, sort: {created_dt: -1}, populate: {path: 'comentarios.usuario', select: '_id usuario foto_perfil'} });
+        return await postModel.paginate({}, {limit: 3, page, sort: {created_dt: -1}, populate: [{path: 'comentarios.usuario', select: '_id usuario foto_perfil'},
+            {path: 'reacciones.usuario', select: 'usuario foto_perfil'},
+            {path: 'created_id', select: 'usuario foto_perfil'}] 
+        });
     };
 
     async nuevoComentario(postId, comentario){ 
@@ -29,16 +32,15 @@ class PostDao{
         return await postModel.findById(postId);
     }
 
-    async getReacciones(postId){
-        return await postModel.findById(postId, 'reacciones');
-    }
-
     async eliminaPost(postId){
         return await postModel.findByIdAndDelete(postId);
     }
 
-    async getPostPropios(page, userId){ 
-        return await postModel.paginate(userId ? {created_id: userId} : {}, {limit: 3, page, sort: {created_dt: -1}, populate: {path: 'comentarios.usuario', select: '_id usuario foto_perfil'} });
+    async getPostByUserId(page, userId){ 
+        return await postModel.paginate(userId ? {created_id: userId} : {}, {limit: 3, page, sort: {created_dt: -1}, populate: [{path: 'comentarios.usuario', select: '_id usuario foto_perfil'},
+            {path: 'reacciones.usuario', select: 'usuario foto_perfil'},
+            {path: 'created_id', select: 'usuario foto_perfil'}]
+        });
     };
 }
 

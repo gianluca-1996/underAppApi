@@ -25,18 +25,14 @@ class PostService{
         return {status: 200, payload: await postDao.eliminaMeGusta(postId, userId)};
     }
 
-    async getReacciones(postId){
-        return {status: 200, payload: await postDao.getReacciones(postId)};
-    }
-
     async eliminaPost(postId){
         const response = await postDao.eliminaPost(postId);
         if(!response) return {status: 400, payload: 'Post no encontrado'};
         return {status: 200, payload: 'Post eliminado'};
     }
 
-    async getPostPropios(page, userId){
-        return {status: 200, payload: await postDao.getPostPropios(page, userId)};
+    async getPostByUserId(page, userId){
+        return {status: 200, payload: await postDao.getPostByUserId(page, userId)};
     }
 }
 

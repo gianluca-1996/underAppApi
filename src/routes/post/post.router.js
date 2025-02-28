@@ -8,8 +8,7 @@ postRouter.get('/',  authToken, postController.getPosts);
 postRouter.post('/nuevoComentario', authToken, postController.nuevoComentario);
 postRouter.post('/agregaMeGusta', authToken, postController.agregarMeGusta);
 postRouter.delete('/eliminaMeGusta/:postId', authToken, postController.eliminaMeGusta);
-postRouter.get('/reacciones/:postId',  authToken, postController.getReacciones);
 postRouter.delete('/eliminaPost/:postId', authToken, postController.eliminaPost);
-postRouter.get('/propios', authToken, postController.getPostPropios);
+postRouter.get('/getByUserId/:_id', authToken, postController.getPostByUserId);
 
 export default postRouter;

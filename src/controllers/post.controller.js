@@ -51,15 +51,6 @@ class PostController{
         }
     }
 
-    async getReacciones(req, res){
-        try {
-            const response = await postService.getReacciones(req.params.postId);
-            res.status(response.status).json(response.payload);
-        } catch (error) {
-            res.status(500).json(error.message);
-        }
-    }
-
     async eliminaPost(req, res){
         try {
             const response = await postService.eliminaPost(req.params.postId);
@@ -69,11 +60,11 @@ class PostController{
         }
     }
 
-    async getPostPropios(req, res){
+    async getPostByUserId(req, res){
         try {
             let page = req.query.page;
             if(!page) page = 1;
-            const response = await postService.getPostPropios(page, req.user._id);
+            const response = await postService.getPostByUserId(page, req.params._id);
             res.status(response.status).json(response.payload);
         } catch (error) {
             res.status(500).json(error.message);
