@@ -9,8 +9,8 @@ const userSchema = new mongoose.Schema({
     foto_perfil: {type: String},
     foto_portada: {type: String},
     localidad: {type: String, required: true},
-    seguidos: [{type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'}],
-    seguidores: [{type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'}],
+    seguidos: {type: [ { usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }} ]},
+    seguidores: {type: [ { usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }} ]},
     //eventos_participados: []
     puntaje: {type: Number, default: 0},
     edad: {type: Number, required: true},

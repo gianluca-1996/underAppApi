@@ -1,4 +1,5 @@
 import userModel from "../models/user.model.js";
+import mongoose from 'mongoose';
 
 class UserDao{
     async getUserByEmail(email){
@@ -14,11 +15,23 @@ class UserDao{
     };
 
     async getUserById(id){
-        return await userModel.findById(id, {'password': 0, 'created_dt': 0, 'rol': 0, '__v': 0});
+        return await userModel.findById(id, {'password': 0, 'created_dt': 0, 'rol': 0, '__v': 0}, {populate: {path: 'seguidores.usuario', select: '_id usuario foto_perfil'}});
     };
 
     async deleteUserById(id){
         return await userModel.deleteOne({_id: id});
+    };
+
+    async followUser(idUserLoged, idUserToFollow, session){        
+        await userModel.findByIdAndUpdate(idUserToFollow, {$push: {seguidores: {usuario: idUserLoged}}}, {session: session});
+        await userModel.findByIdAndUpdate(idUserLoged, {$push: {seguidos: {usuario: idUserToFollow}}}, {session: session});
+        return;
+    };
+
+    async dejarDeSeguir(_id, idUsuarioSeguido, session){        
+        await userModel.findByIdAndUpdate(idUsuarioSeguido, {$pull: {seguidores: {usuario: _id}}}, {session: session});
+        await userModel.findByIdAndUpdate(_id, {$pull: {seguidos: {usuario: idUsuarioSeguido}}}, {session: session});
+        return;
     };
 }
 

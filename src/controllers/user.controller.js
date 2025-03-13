@@ -67,11 +67,31 @@ class UserController{
         }
     };
 
-    getUserByToken(req, res){
+    async getUserByToken(req, res){
         try {
             res.json({payload: req.user});
         } catch (error) {
             return res.status(500).json(error.message);
+        }
+    };
+
+    async followUser(req, res){
+        if(!req.body.idUserToFollow) return res.status(400).json({message: 'Debe completar el id'});
+        try {
+            const response = await userService.followUser(req.user._id, req.body.idUserToFollow);
+            return res.json(response);
+        } catch (error) {
+            return res.status(error.statusCode || 500).json(error.message);
+        }
+    };
+
+    async dejarDeSeguir(req, res){
+        if(!req.body.idUsuarioSeguido) return res.status(400).json('Faltan datos de input');
+        try {
+            const response = await userService.dejarDeSeguir(req.user._id, req.body.idUsuarioSeguido);
+            return res.json(response);
+        } catch (error) {
+            return res.status(error.statusCode || 500).json(error.message);
         }
     };
 } 
