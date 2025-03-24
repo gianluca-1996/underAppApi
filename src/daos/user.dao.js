@@ -11,7 +11,7 @@ class UserDao{
     };
 
     async getAllUsers(){
-        return await userModel.find({});
+        return await userModel.find({}, {usuario: 1});
     };
 
     async getUserById(id){
@@ -22,9 +22,9 @@ class UserDao{
         return await userModel.deleteOne({_id: id});
     };
 
-    async followUser(idUserLoged, idUserToFollow, session){        
-        await userModel.findByIdAndUpdate(idUserToFollow, {$push: {seguidores: {usuario: idUserLoged}}}, {session: session});
-        await userModel.findByIdAndUpdate(idUserLoged, {$push: {seguidos: {usuario: idUserToFollow}}}, {session: session});
+    async followUser(_id, idUsuarioASeguir, session){        
+        await userModel.findByIdAndUpdate(idUsuarioASeguir, {$push: {seguidores: {usuario: _id}}}, {session: session});
+        await userModel.findByIdAndUpdate(_id, {$push: {seguidos: {usuario: idUsuarioASeguir}}}, {session: session});
         return;
     };
 

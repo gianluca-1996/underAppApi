@@ -8,8 +8,8 @@ import AppError from "../utils/error.js";
 class UserService{
     async login(email, password){
         const response = await userDao.getUserByEmail(email);
-        if(!response) return({status: 400, payload: 'Email incorrecto'});
-        if(!bcrypt.compareSync(password, response.password)) return({status: 400, payload: 'Contraseña incorrecta'});
+        if(!response) throw new AppError('Email incorrecto', 400);
+        if(!bcrypt.compareSync(password, response.password)) throw new AppError('Contraseña incorrecta', 400);
         const user = {
             _id: response._id, 
             usuario: response.usuario, 
@@ -19,14 +19,12 @@ class UserService{
         }
         //crea token
         const token = generateToken(user);
-        return ({status: 200, 
-            payload: {user, token}}
-        );
+        return {user, token};
     };
 
     async createUser(data){
         const user = await userDao.getUserByEmail(data.email);
-        if(user) return({status: 400, payload: 'El email ingresado ya existe'});
+        if(user) throw new AppError('El email ingresado ya existe', 400);
         const saltRounds = 10;
         const password = data.password;
         const salt = bcrypt.genSaltSync(saltRounds);
@@ -39,73 +37,68 @@ class UserService{
             edad: data.edad,
             foto_perfil: data.foto_perfil && data.foto_perfil
         });
-        return ({status: 201, payload: new UserDto(response)});
+        return response;
     };
 
     async getAllUsers(){
-        const response = await userDao.getAllUsers();
-        const usersDto =  [];
-        response.forEach(user => {usersDto.push(new UserDto(user))});
-        return ({status: 200, payload: usersDto});
+        const response = await userDao.getAllUsers(); 
+        return response;
     };
 
     async getUserByEmail(email){
         const response = await userDao.getUserByEmail(email);
-        if(!response) return ({status: 404, payload: 'el email ingresado no existe'});
-        return ({status: 200, payload: response});
+        if(!response) throw new AppError('el email ingresado no existe', 404);
+        return response;
     };
 
     async getUserById(id){
         const response = await userDao.getUserById(id);
-        if(!response) return ({status: 404, payload: 'el id ingresado no existe'});
-        return ({status: 200, payload: response});
+        if(!response) throw new AppError('El id ingresado no existe', 404);
+        return response;
     };
 
     async deleteUserById(id){
         const userToDelete = await userDao.getUserById(id);
-        if(!userToDelete) return ({status: 404, payload: 'El usuario a eliminar no existe'});
+        if(!userToDelete) throw new AppError('El usuario a eliminar no existe', 404);
         const deletedUser = await userDao.deleteUserById(id);
-        if(deletedUser.deletedCount !== 1) return ({status: 404, payload: 'La eliminacion del usuario ha fallado'});
-        return ({status: 200, payload: 'Usuario eliminado con éxito'});
+        if(deletedUser.deletedCount !== 1) throw new AppError('La eliminacion del usuario ha fallado', 500);
+        return {message: 'Usuario Eliminado con éxito'};
     };
 
-    async followUser(idUserLoged, idUserToFollow){
-        const userToFollow = await userDao.getUserById(idUserToFollow);
-        if(!userToFollow) throw new AppError('No se ha encontrado el usuario', 404);
-        if(userToFollow.seguidores.some(e => e.usuario._id.toString() === idUserLoged)) throw new AppError('Ya es seguidor de este usuario', 409);
+    async followUser(_id, idUsuarioASeguir){
+        const usuarioASeguir = await userDao.getUserById(idUsuarioASeguir);
+        if(!usuarioASeguir) throw new AppError('No se ha encontrado el usuario', 404);
+        if(usuarioASeguir.seguidores.some(e => e.usuario._id.toString() === _id)) throw new AppError('Ya es seguidor de este usuario', 409);
         
         const session = await mongoose.startSession();
-        let response;
         try {
             await session.withTransaction(async () => {
-                await userDao.followUser(idUserLoged, userToFollow._id.toString(), session);
-                response = {estado: 'PROCESADO', accion: 'ACTUALIZADO'};
+                await userDao.followUser(_id, usuarioASeguir._id.toString(), session);
             });
             
-            return response;
+            return {message: 'Siguiendo'};
         } catch (error) {
-            throw new Error(`Ha ocurrido un error en la base de datos: ${error.message}`);
+            throw new AppError(`Ha ocurrido un error en la base de datos: ${error.message}`, 500);
         }finally{
             session.endSession();
         }
     };
 
+    //TODO: verificar la existencia del usuario a traves de una nueva consulta a la base que devuelva un booleano
     async dejarDeSeguir(_id, idUsuarioSeguido){
         const usuarioSeguido = await userDao.getUserById(idUsuarioSeguido);
         if(!usuarioSeguido) throw new AppError('No se ha encontrado el usuario', 404);
         if(!usuarioSeguido.seguidores.some(e => e.usuario._id.toString() === _id)) throw new AppError('No eres seguidor de este usuario', 409);
         
         const session = await mongoose.startSession();
-        let response;
         try {
             await session.withTransaction(async () => {
                 await userDao.dejarDeSeguir(_id, String(idUsuarioSeguido), session);
-                response = {estado: 'PROCESADO', accion: 'ACTUALIZADO'};
             });
             
-            return response;
+            return {message: 'Ha dejado de seguir al usuario'};
         } catch (error) {
-            throw new Error(`Ha ocurrido un error en la base de datos: ${error.message}`);
+            throw new AppError(`Ha ocurrido un error en la base de datos: ${error.message}`, 500);
         }finally{
             session.endSession();
         }

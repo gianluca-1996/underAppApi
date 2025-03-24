@@ -1,38 +1,60 @@
-import PostDto from "../dtos/post.dto.js";
 import postDao from "../daos/post.dao.js";
+import AppError from "../utils/error.js";
 
 class PostService{
-    async nuevoPost(idUser, texto){        
-        await postDao.nuevoPost({texto: texto, created_dt: Date(), created_id: idUser});
-        return {status: 201, payload: 'Post agregado'};
+    async nuevoPost(idUser, texto){   
+        const response = await postDao.nuevoPost({texto: texto, created_dt: Date(), created_id: idUser});
+        return {message: 'Post agregado', data: response};
     }
 
     async getPosts(page){
-        return {status: 200, payload: await postDao.getPosts(page)};
+        return await postDao.getPosts(page);
     }
 
     async nuevoComentario(_id, texto, postId){
-        const comentario = {usuario: _id, texto, created_dt: new Date()}
-        return {status: 201, payload: await postDao.nuevoComentario(postId, comentario)};
+        const comentario = {usuario: _id, texto, created_dt: new Date()};
+        const response = await postDao.nuevoComentario(postId, comentario);
+        if(!response) throw new AppError('No se ha encontrado el post', 404);
+        return response;
     }
 
-    async agregaMeGusta(postId, userId){
-        const post = await postDao.getPost(postId);
-        return {status: 201, payload: await postDao.agregaMeGusta(postId, userId)};
+    async agregaMeGusta(_id, postId){
+        if(!postId) throw new AppError('Debe completar el campo postId', 400);
+        const post = await postDao.getPostById(postId);
+        if(!post) throw new AppError('No se ha encontrado el post', 400);
+        const tieneMeGusta = await postDao.tieneMeGusta(_id, postId);
+        if(tieneMeGusta) throw new AppError('Este post ya posee su reaccion', 400);
+        const response = await postDao.agregaMeGusta(_id, postId);
+        return {message: 'Actualizado', data: response};
     }
 
-    async eliminaMeGusta(postId, userId){
-        return {status: 200, payload: await postDao.eliminaMeGusta(postId, userId)};
+    async eliminaMeGusta(_id, postId){
+        if(!postId) throw new AppError('Debe completar el campo postId', 400);
+        const post = await postDao.getPostById(postId);
+        if(!post) throw new AppError('No se ha encontrado el post', 400);
+        const tieneMeGusta = await postDao.tieneMeGusta(_id, postId);
+        if(!tieneMeGusta) throw new AppError('Este post no posee su reaccion', 400);
+        const response = await postDao.eliminaMeGusta(_id, postId);
+        return {message: 'Actualizado', data: response};
     }
 
     async eliminaPost(postId){
+        if(!postId) throw new AppError('Debe completar el campo postId', 400);
         const response = await postDao.eliminaPost(postId);
-        if(!response) return {status: 400, payload: 'Post no encontrado'};
-        return {status: 200, payload: 'Post eliminado'};
+        if(!response) throw new AppError('Post no encontrado', 404);
+        return {message: 'Post eliminado'};
     }
 
     async getPostByUserId(page, userId){
-        return {status: 200, payload: await postDao.getPostByUserId(page, userId)};
+        if(!userId) throw new AppError('Debe completar el campo userId', 400);
+        return await postDao.getPostByUserId(page, userId);
+    }
+
+    async getReacciones(postId){
+        if(!postId) throw new AppError('Debe completar el campo userId', 400);
+        const response = await postDao.getReacciones(postId);
+        if(!response) throw new AppError('El post indicado no existe', 404);
+        return response; 
     }
 }
 
