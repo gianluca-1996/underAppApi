@@ -1,4 +1,5 @@
 import postService from "../services/post.service.js";
+import { isValidObjectId } from 'mongoose';
 
 class PostController{
     async nuevoPost(req, res){
@@ -25,7 +26,7 @@ class PostController{
     async nuevoComentario(req, res){
         try {
             const {texto, postId} = req.body;
-            if(!texto) return res.status(400).json('Debe completar el campo texto');
+            if(!texto || texto.trim() === '') return res.status(400).json('Debe completar el campo texto');
             if(!postId) return res.status(400).json('Debe completar el campo postId');
             const response = await postService.nuevoComentario(req.user._id, texto, postId);
             res.json(response);
@@ -36,6 +37,7 @@ class PostController{
 
     async agregarMeGusta(req, res){
         try {
+            if(!req.body.postId) res.status(400).json({message: 'Debe completar el campo postId'});
             const response = await postService.agregaMeGusta(req.user._id, req.body.postId);
             res.json(response);
         } catch (error) {
@@ -45,6 +47,7 @@ class PostController{
 
     async eliminaMeGusta(req, res){
         try {
+            if(!postId) res.status(400).json({message: 'Debe completar el campo postId'});
             const response = await postService.eliminaMeGusta(req.user._id, req.body.postId);
             res.json(response);
         } catch (error) {
@@ -54,6 +57,7 @@ class PostController{
 
     async eliminaPost(req, res){
         try {
+            if(!postId) res.status(400).json({message: 'Debe completar el campo postId'});
             const response = await postService.eliminaPost(req.body.postId);
             res.json(response);
         } catch (error) {
@@ -62,8 +66,11 @@ class PostController{
     }
 
     async getPostByUserId(req, res){
+        const userId = req.params.userId;
         try {
-            const response = await postService.getPostByUserId((!req.query.page) ? 1 : req.query.page, req.params.userId);
+            if(!userId) res.status(400).json({message: 'Debe completar el campo userId'});
+            if(!isValidObjectId(userId)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
+            const response = await postService.getPostByUserId((!req.query.page) ? 1 : req.query.page, userId);
             res.json(response);
         } catch (error) {
             return res.status(error.statusCode || 500).json({message: error.message});
@@ -71,8 +78,11 @@ class PostController{
     }
 
     async getReacciones(req, res){
+        const postId = req.params.postId;
         try {
-            const response = await postService.getReacciones(req.body.postId);
+            if(!postId) res.status(400).json({message: 'Campo postId incompleto'});
+            if(!isValidObjectId(postId)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
+            const response = await postService.getReacciones(postId);
             res.json(response);
         } catch (error) {
             return res.status(error.statusCode || 500).json({message: error.message});

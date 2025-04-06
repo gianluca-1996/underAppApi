@@ -12,5 +12,7 @@ userRouter.delete('/delete/:id', authToken, authorization(['admin']), userContro
 userRouter.get('/getUserByToken', authToken, userController.getUserByToken);
 userRouter.post('/followUser', authToken, userController.followUser);
 userRouter.post('/dejarDeSeguir', authToken, userController.dejarDeSeguir);
+userRouter.get('/esSeguidor/:userId', authToken, userController.esSeguidor);
+userRouter.get('/esSeguido/:userId', authToken, userController.perfilSigueUsuarioLogueado);
 
 export default userRouter;

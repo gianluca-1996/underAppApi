@@ -68,7 +68,8 @@ class UserService{
     async followUser(_id, idUsuarioASeguir){
         const usuarioASeguir = await userDao.getUserById(idUsuarioASeguir);
         if(!usuarioASeguir) throw new AppError('No se ha encontrado el usuario', 404);
-        if(usuarioASeguir.seguidores.some(e => e.usuario._id.toString() === _id)) throw new AppError('Ya es seguidor de este usuario', 409);
+        const esSeguidor = await userDao.esSeguidor(_id, idUsuarioASeguir);
+        if(esSeguidor) throw new AppError('Ya es seguidor de este usuario', 409);
         
         const session = await mongoose.startSession();
         try {
@@ -84,11 +85,11 @@ class UserService{
         }
     };
 
-    //TODO: verificar la existencia del usuario a traves de una nueva consulta a la base que devuelva un booleano
     async dejarDeSeguir(_id, idUsuarioSeguido){
         const usuarioSeguido = await userDao.getUserById(idUsuarioSeguido);
         if(!usuarioSeguido) throw new AppError('No se ha encontrado el usuario', 404);
-        if(!usuarioSeguido.seguidores.some(e => e.usuario._id.toString() === _id)) throw new AppError('No eres seguidor de este usuario', 409);
+        const esSeguidor = await userDao.esSeguidor(_id, idUsuarioSeguido);
+        if(!esSeguidor) throw new AppError('No eres seguidor de este usuario', 409);
         
         const session = await mongoose.startSession();
         try {
@@ -103,6 +104,16 @@ class UserService{
             session.endSession();
         }
     };
+
+    async esSeguidor(_id, userId){
+        const response = await userDao.esSeguidor(_id, userId);
+        return response ? true : false;
+    }
+
+    async perfilSigueUsuarioLogueado(_id, userId){
+        const response = await userDao.perfilSigueUsuarioLogueado(_id, userId);
+        return response ? true : false;
+    }
 }
 
 export default new UserService();

@@ -5,7 +5,7 @@ class UserController{
 
     async login(req, res){
         try {
-            if(!req.body.email || !req.body.password) return res.status(400).json('Hay campos sin completar');
+            if(!req.body.email || !req.body.password) return res.status(400).json({message: 'Hay campos sin completar'});
             const {email, password} = req.body;
             const response = await userService.login(email, password);
             return res.json(response);
@@ -15,11 +15,12 @@ class UserController{
     };
 
     async createUser(req, res){
-        if(!req.body.email) return res.status(400).json('Debe completar el email');
-        if(!req.body.password) return res.status(400).json('Debe completar el password');
-        if(!req.body.usuario) return res.status(400).json('Debe completar el usuario');
-        if(!req.body.localidad) return res.status(400).json('Debe completar la localidad');
-        if(!req.body.edad) return res.status(400).json('Debe completar la edad');
+        if(!req.body.email) return res.status(400).json({message: 'Debe completar el email'});
+        if(!req.body.password) return res.status(400).json({message: 'Debe completar el password'});
+        if(!req.body.usuario) return res.status(400).json({message: 'Debe completar el usuario'});
+        if(!req.body.localidad) return res.status(400).json({message: 'Debe completar la localidad'});
+        if(!req.body.edad) return res.status(400).json({message: 'Debe completar la edad'});
+        if(!req.body.edad < 10) return res.status(400).json({message: 'La edad debe ser mayor o igual a 10'});
         
         try {
             const response = await userService.createUser(req.body);
@@ -39,7 +40,9 @@ class UserController{
     };
 
     async getUserByEmail(req, res){
-        if(!req.params.email) return res.status(400).json('Debe completar el email');
+        if(!req.params.email) return res.status(400).json({message: 'Debe completar el email'});
+        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!regexEmail.test(req.params.email)) return res.status(400).json({message: 'Formato de mail incorrecto'});
         try {
             const response = await userService.getUserByEmail(req.params.email);
             return res.json(response);
@@ -50,6 +53,8 @@ class UserController{
 
     async getUserById(req, res){
         if(!req.params._id) return res.status(400).json({mensaje: 'Debe completar el id del usuario'});
+        if(!isValidObjectId(req.params._id)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
+
         try {
             const response = await userService.getUserById(req.params._id);
             return res.json(response);
@@ -59,7 +64,7 @@ class UserController{
     };
 
     async deleteUserById(req, res){
-        if(!req.params.id) return res.status(400).json('Debe completar el id');
+        if(!req.params.id) return res.status(400).json({message: 'Debe completar el id'});
         try {
             const response = await userService.deleteUserById(req.params.id);
             return res.json(response);
@@ -77,10 +82,11 @@ class UserController{
     };
 
     async followUser(req, res){
-        if(!req.body.idUserToFollow) return res.status(400).json('Debe completar el id');
-        if(!isValidObjectId(req.body.idUserToFollow)) return res.status(400).json('El id ingresado no posee el formato correcto');
+        const {idUserToFollow} = req.body;
+        if(!idUserToFollow) return res.status(400).json({message: 'Debe completar el id'});
+        if(!isValidObjectId(idUserToFollow)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
         try {
-            const response = await userService.followUser(req.user._id, req.body.idUserToFollow);
+            const response = await userService.followUser(req.user._id, idUserToFollow);
             return res.json(response);
         } catch (error) {
             return res.status(error.statusCode || 500).json({message: error.message});
@@ -88,15 +94,34 @@ class UserController{
     };
 
     async dejarDeSeguir(req, res){
-        if(!req.body.idUsuarioSeguido) return res.status(400).json('Faltan datos de input');
-        if(!isValidObjectId(req.body.idUsuarioSeguido)) return res.status(400).json('El id ingresado no posee el formato correcto');
+        const {idUsuarioSeguido} = req.body;
+        if(!idUsuarioSeguido) return res.status(400).json({message: 'Faltan datos de input'});
+        if(!isValidObjectId(idUsuarioSeguido)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
         try {
-            const response = await userService.dejarDeSeguir(req.user._id, req.body.idUsuarioSeguido);
+            const response = await userService.dejarDeSeguir(req.user._id, idUsuarioSeguido);
             return res.json(response);
         } catch (error) {
             return res.status(error.statusCode || 500).json({message: error.message});
         }
     };
+
+    async esSeguidor(req, res){
+        try {
+            const response = await userService.esSeguidor(req.user._id, req.params.userId);
+            return res.json(response);
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({message: error.message});
+        }
+    }
+
+    async perfilSigueUsuarioLogueado(req, res){
+        try {
+            const response = await userService.perfilSigueUsuarioLogueado(req.user._id, req.params.userId);
+            return res.json(response);
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({message: error.message});
+        }
+    }
 } 
 
 export default new UserController();

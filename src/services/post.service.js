@@ -19,7 +19,6 @@ class PostService{
     }
 
     async agregaMeGusta(_id, postId){
-        if(!postId) throw new AppError('Debe completar el campo postId', 400);
         const post = await postDao.getPostById(postId);
         if(!post) throw new AppError('No se ha encontrado el post', 400);
         const tieneMeGusta = await postDao.tieneMeGusta(_id, postId);
@@ -29,7 +28,6 @@ class PostService{
     }
 
     async eliminaMeGusta(_id, postId){
-        if(!postId) throw new AppError('Debe completar el campo postId', 400);
         const post = await postDao.getPostById(postId);
         if(!post) throw new AppError('No se ha encontrado el post', 400);
         const tieneMeGusta = await postDao.tieneMeGusta(_id, postId);
@@ -39,19 +37,16 @@ class PostService{
     }
 
     async eliminaPost(postId){
-        if(!postId) throw new AppError('Debe completar el campo postId', 400);
         const response = await postDao.eliminaPost(postId);
         if(!response) throw new AppError('Post no encontrado', 404);
         return {message: 'Post eliminado'};
     }
 
     async getPostByUserId(page, userId){
-        if(!userId) throw new AppError('Debe completar el campo userId', 400);
         return await postDao.getPostByUserId(page, userId);
     }
 
     async getReacciones(postId){
-        if(!postId) throw new AppError('Debe completar el campo userId', 400);
         const response = await postDao.getReacciones(postId);
         if(!response) throw new AppError('El post indicado no existe', 404);
         return response; 

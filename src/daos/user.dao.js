@@ -33,6 +33,16 @@ class UserDao{
         await userModel.findByIdAndUpdate(_id, {$pull: {seguidos: {usuario: idUsuarioSeguido}}}, {session: session});
         return;
     };
+
+    // Retorna un booleano que indica si el usuario logueado es seguidor del perfil indicado
+    async esSeguidor(_id, idUsuarioASeguir){
+        return await userModel.exists( { $and: [ {_id: {$eq: idUsuarioASeguir}}, {'seguidores.usuario': {$eq: _id}} ] } );
+    }
+
+    // Indica si el usuario del perfil actual sigue al usuario logueado
+    async perfilSigueUsuarioLogueado(_id, userId){
+        return await userModel.exists( { $and: [ {_id: {$eq: userId}}, {'seguidos.usuario': {$eq: _id}} ] } );
+    }
 }
 
 export default new UserDao();
