@@ -1,13 +1,17 @@
-import { populate } from "dotenv";
 import postModel from "../models/post.model.js";
 
 class PostDao{
-    async nuevoPost(post){ return await postModel.create(post) };
+    async nuevoPost(post){ 
+        return await postModel.create(post) 
+    };
     
     async getPosts(page){ 
-        return await postModel.paginate({}, {limit: 3, page, sort: {created_dt: -1}, populate: [{path: 'comentarios.usuario', select: '_id usuario foto_perfil'},
-            {path: 'reacciones.usuario', select: 'usuario foto_perfil'},
-            {path: 'created_id', select: 'usuario foto_perfil'}] 
+        return await postModel.paginate({}, {limit: 3, page, sort: {created_dt: -1}, 
+            populate: [
+                {path: 'comentarios.usuario', select: '_id usuario foto_perfil'},
+                //{path: 'reacciones.usuario', select: 'usuario foto_perfil'},
+                {path: 'created_id', select: 'usuario foto_perfil'}
+            ] 
         });
     };
 

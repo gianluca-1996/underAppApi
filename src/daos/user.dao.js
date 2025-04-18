@@ -34,7 +34,7 @@ class UserDao{
         return;
     };
 
-    // Retorna un booleano que indica si el usuario logueado es seguidor del perfil indicado
+    // Indica si el usuario logueado es seguidor del perfil indicado
     async esSeguidor(_id, idUsuarioASeguir){
         return await userModel.exists( { $and: [ {_id: {$eq: idUsuarioASeguir}}, {'seguidores.usuario': {$eq: _id}} ] } );
     }

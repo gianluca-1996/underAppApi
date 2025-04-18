@@ -47,7 +47,7 @@ class PostController{
 
     async eliminaMeGusta(req, res){
         try {
-            if(!postId) res.status(400).json({message: 'Debe completar el campo postId'});
+            if(!req.body.postId) res.status(400).json({message: 'Debe completar el campo postId'});
             const response = await postService.eliminaMeGusta(req.user._id, req.body.postId);
             res.json(response);
         } catch (error) {
@@ -57,8 +57,8 @@ class PostController{
 
     async eliminaPost(req, res){
         try {
-            if(!postId) res.status(400).json({message: 'Debe completar el campo postId'});
-            const response = await postService.eliminaPost(req.body.postId);
+            if(!req.body.postId) res.status(400).json({message: 'Debe completar el campo postId'});
+            const response = await postService.eliminaPost(req.user._id, req.body.postId);
             res.json(response);
         } catch (error) {
             res.status(error.statusCode || 500).json({message: error.message});
@@ -77,6 +77,7 @@ class PostController{
         }
     }
 
+    // Por ahora no se usa. Usar este metodo si se van a actualizar las reacciones al momento de hacer click para ver la lista
     async getReacciones(req, res){
         const postId = req.params.postId;
         try {

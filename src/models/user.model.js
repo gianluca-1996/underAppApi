@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     edad: {type: Number, required: true},
     rol: {type: String, require: true, default: 'basico'},
     created_dt: {type: Date, default: Date.now()}
-});
+}, { timestamps: true });
 
 const userModel = mongoose.model(userCollection, userSchema);
 export default userModel;

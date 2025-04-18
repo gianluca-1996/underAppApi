@@ -3,7 +3,7 @@ import AppError from "../utils/error.js";
 
 class PostService{
     async nuevoPost(idUser, texto){   
-        const response = await postDao.nuevoPost({texto: texto, created_dt: Date(), created_id: idUser});
+        const response = await postDao.nuevoPost({texto: texto, created_id: idUser});
         return {message: 'Post agregado', data: response};
     }
 
@@ -36,7 +36,9 @@ class PostService{
         return {message: 'Actualizado', data: response};
     }
 
-    async eliminaPost(postId){
+    async eliminaPost(_id, postId){
+        const post = await postDao.getPost(postId);
+        if(post.created_id != _id) throw new AppError('No posee permisos para eliminar este recurso', 401);
         const response = await postDao.eliminaPost(postId);
         if(!response) throw new AppError('Post no encontrado', 404);
         return {message: 'Post eliminado'};
