@@ -1,9 +1,9 @@
 import userModel from "../models/user.model.js";
-import mongoose from 'mongoose';
 
 class UserDao{
     async getUserByEmail(email){
-        return await userModel.findOne({email: email}).select('_id usuario password email foto_perfil rol');
+        return await userModel.findOne({email: email}).select('_id usuario password email foto_perfil rol localidad esOrganizador esCompetidor seguidos seguidores')
+        //.populate({path: 'seguidores.usuario seguidos.usuario', select: '_id'});
     };
 
     async createUser(usuario){
@@ -15,7 +15,7 @@ class UserDao{
     };
 
     async getUserById(id){
-        return await userModel.findById(id, {'password': 0, 'created_dt': 0, 'rol': 0, '__v': 0}, {populate: {path: 'seguidores.usuario', select: '_id usuario foto_perfil'}});
+        return await userModel.findById(id, {'password': 0, 'created_dt': 0, 'rol': 0, '__v': 0}, {populate: {path: 'seguidores.usuario seguidos.usuario', select: '_id usuario foto_perfil'}});
     };
 
     async deleteUserById(id){

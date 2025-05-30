@@ -10,8 +10,8 @@ userRouter.get('/getUserByEmail/:email', authToken, userController.getUserByEmai
 userRouter.get('/getUserById/:_id', authToken, userController.getUserById);
 userRouter.delete('/delete/:id', authToken, authorization(['admin']), userController.deleteUserById);
 userRouter.get('/getUserByToken', authToken, userController.getUserByToken);
-userRouter.post('/followUser', authToken, userController.followUser);
-userRouter.post('/dejarDeSeguir', authToken, userController.dejarDeSeguir);
+userRouter.post('/:userId/follow', authToken, userController.followUser);
+userRouter.post('/:userId/unfollow', authToken, userController.dejarDeSeguir);
 userRouter.get('/esSeguidor/:userId', authToken, userController.esSeguidor);
 userRouter.get('/esSeguido/:userId', authToken, userController.perfilSigueUsuarioLogueado);
 

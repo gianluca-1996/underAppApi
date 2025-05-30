@@ -1,7 +1,6 @@
 import userDao from "../daos/user.dao.js";
 import { generateToken } from "../middlewares/auth.js";
 import bcrypt from 'bcrypt';
-import UserDto from "../dtos/user.dto.js";
 import mongoose from 'mongoose';
 import AppError from "../utils/error.js";
 
@@ -15,7 +14,12 @@ class UserService{
             usuario: response.usuario, 
             email: response.email, 
             foto_perfil: response.foto_perfil,
-            rol: response.rol
+            rol: response.rol,
+            localidad: response.localidad,
+            esOrganizador: response.esOrganizador,
+            esCompetidor: response.esCompetidor,
+            seguidos: response.seguidos.length,
+            seguidores: response.seguidores.length
         }
         //crea token
         const token = generateToken(user);

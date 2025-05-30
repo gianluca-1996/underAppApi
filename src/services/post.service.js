@@ -11,16 +11,18 @@ class PostService{
         return await postDao.getPosts(page);
     }
 
+    async getPost(postId){
+        return await postDao.getPost(postId);
+    }
+
     async nuevoComentario(_id, texto, postId){
-        const comentario = {usuario: _id, texto, created_dt: new Date()};
-        const response = await postDao.nuevoComentario(postId, comentario);
-        if(!response) throw new AppError('No se ha encontrado el post', 404);
-        return response;
+        const comentario = {usuario: _id, texto, createdAt: new Date()};
+        return await postDao.nuevoComentario(postId, comentario);
     }
 
     async agregaMeGusta(_id, postId){
         const post = await postDao.getPostById(postId);
-        if(!post) throw new AppError('No se ha encontrado el post', 400);
+        if(!post) throw new AppError('No se ha encontrado el post indicado', 400);
         const tieneMeGusta = await postDao.tieneMeGusta(_id, postId);
         if(tieneMeGusta) throw new AppError('Este post ya posee su reaccion', 400);
         const response = await postDao.agregaMeGusta(_id, postId);
@@ -42,6 +44,10 @@ class PostService{
         const response = await postDao.eliminaPost(postId);
         if(!response) throw new AppError('Post no encontrado', 404);
         return {message: 'Post eliminado'};
+    }
+
+    async editarPost(postId, texto){
+        return await postDao.editarPost(postId, texto);
     }
 
     async getPostByUserId(page, userId){

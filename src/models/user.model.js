@@ -12,9 +12,10 @@ const userSchema = new mongoose.Schema({
     seguidos: {type: [ { usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }} ]},
     seguidores: {type: [ { usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }} ]},
     //eventos_participados: []
-    puntaje: {type: Number, default: 0},
     edad: {type: Number, required: true},
     rol: {type: String, require: true, default: 'basico'},
+    esOrganizador: {type: Boolean, require: true, default: false},
+    esCompetidor: {type: Boolean, require: true, default: false},
     created_dt: {type: Date, default: Date.now()}
 }, { timestamps: true });
 

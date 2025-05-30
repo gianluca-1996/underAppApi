@@ -5,11 +5,12 @@ const postRouter = express.Router();
 
 postRouter.post('/', authToken, postController.nuevoPost);
 postRouter.get('/',  authToken, postController.getPosts);
-postRouter.post('/nuevoComentario', authToken, postController.nuevoComentario);
-postRouter.post('/agregaMeGusta', authToken, postController.agregarMeGusta);
-postRouter.delete('/eliminaMeGusta', authToken, postController.eliminaMeGusta);
-postRouter.delete('/eliminaPost', authToken, postController.eliminaPost);
+postRouter.delete('/:postId', authToken, postController.eliminaPost);
+postRouter.put('/:postId', authToken, postController.editarPost);
+postRouter.post('/:postId/comentario', authToken, postController.nuevoComentario);
+postRouter.post('/:postId/like', authToken, postController.agregarMeGusta);
+postRouter.get('/:postId/like', authToken, postController.getReacciones);
+postRouter.delete('/:postId/like', authToken, postController.eliminaMeGusta);
 postRouter.get('/getByUserId/:userId', authToken, postController.getPostByUserId);
-postRouter.get('/reacciones/:postId', authToken, postController.getReacciones);
 
 export default postRouter;

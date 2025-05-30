@@ -25,9 +25,13 @@ class PostController{
 
     async nuevoComentario(req, res){
         try {
-            const {texto, postId} = req.body;
+            const texto = req.body.texto;
+            const postId = req.params.postId;
             if(!texto || texto.trim() === '') return res.status(400).json('Debe completar el campo texto');
-            if(!postId) return res.status(400).json('Debe completar el campo postId');
+            
+            const post = await postService.getPost(postId);
+            if(!post) return res.status(400).json({message: 'Post no encontrado'});
+            
             const response = await postService.nuevoComentario(req.user._id, texto, postId);
             res.json(response);
         } catch (error) {
@@ -37,8 +41,9 @@ class PostController{
 
     async agregarMeGusta(req, res){
         try {
-            if(!req.body.postId) res.status(400).json({message: 'Debe completar el campo postId'});
-            const response = await postService.agregaMeGusta(req.user._id, req.body.postId);
+            const postId = req.params.postId;
+            if(!postId) return res.status(400).json({message: 'Debe completar el campo postId'});
+            const response = await postService.agregaMeGusta(req.user._id, postId);
             res.json(response);
         } catch (error) {
             res.status(error.statusCode || 500).json({message: error.message});
@@ -47,8 +52,9 @@ class PostController{
 
     async eliminaMeGusta(req, res){
         try {
-            if(!req.body.postId) res.status(400).json({message: 'Debe completar el campo postId'});
-            const response = await postService.eliminaMeGusta(req.user._id, req.body.postId);
+            const postId = req.params.postId;
+            if(!postId) res.status(400).json({message: 'Debe completar el campo postId'});
+            const response = await postService.eliminaMeGusta(req.user._id, postId);
             res.json(response);
         } catch (error) {
             res.status(error.statusCode || 500).json({message: error.message});
@@ -57,8 +63,32 @@ class PostController{
 
     async eliminaPost(req, res){
         try {
-            if(!req.body.postId) res.status(400).json({message: 'Debe completar el campo postId'});
-            const response = await postService.eliminaPost(req.user._id, req.body.postId);
+            const postId = req.params.postId;
+            const post = await postService.getPost(postId);
+            if(!post) return res.status(400).json({message: 'Post no encontrado'});
+
+            if(post.created_id.toString() !== req.user._id) return res.status(400).json({message: 'No posee permisos para eliminar este post'});
+            
+            const response = await postService.eliminaPost(req.user._id, postId);
+            res.json(response);
+        } catch (error) {
+            res.status(error.statusCode || 500).json({message: error.message});
+        }
+    }
+    
+    async editarPost(req, res){
+        try {
+            const postId = req.params.postId;
+            const texto = req.body.texto;
+            if(!texto || texto.trim() === '') return res.status(400).json({message: 'Debe completar el campo texto'});
+            
+            const post = await postService.getPost(postId);
+            if(!post) return res.status(400).json({message: 'Post no encontrado'});
+
+            if(post.created_id.toString() !== req.user._id) return res.status(400).json({message: 'No posee permisos para editar este post'});
+            
+            const response = await postService.editarPost(postId, texto);
+            if(!response) return res.status(500).json({message: 'Error al actualizar el documento'});
             res.json(response);
         } catch (error) {
             res.status(error.statusCode || 500).json({message: error.message});
@@ -67,10 +97,11 @@ class PostController{
 
     async getPostByUserId(req, res){
         const userId = req.params.userId;
+        const page = req.query.page ? req.query.page : 1;
         try {
             if(!userId) res.status(400).json({message: 'Debe completar el campo userId'});
             if(!isValidObjectId(userId)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
-            const response = await postService.getPostByUserId((!req.query.page) ? 1 : req.query.page, userId);
+            const response = await postService.getPostByUserId(page, userId);
             res.json(response);
         } catch (error) {
             return res.status(error.statusCode || 500).json({message: error.message});

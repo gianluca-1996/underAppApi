@@ -82,8 +82,7 @@ class UserController{
     };
 
     async followUser(req, res){
-        const {idUserToFollow} = req.body;
-        if(!idUserToFollow) return res.status(400).json({message: 'Debe completar el id'});
+        const idUserToFollow = req.params.userId;
         if(!isValidObjectId(idUserToFollow)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
         try {
             const response = await userService.followUser(req.user._id, idUserToFollow);
@@ -94,7 +93,7 @@ class UserController{
     };
 
     async dejarDeSeguir(req, res){
-        const {idUsuarioSeguido} = req.body;
+        const idUsuarioSeguido = req.params.userId;
         if(!idUsuarioSeguido) return res.status(400).json({message: 'Faltan datos de input'});
         if(!isValidObjectId(idUsuarioSeguido)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
         try {
