@@ -81,11 +81,11 @@ class UserController{
         }
     };
 
-    async followUser(req, res){
+    async seguir(req, res){
         const idUserToFollow = req.params.userId;
         if(!isValidObjectId(idUserToFollow)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
         try {
-            const response = await userService.followUser(req.user._id, idUserToFollow);
+            const response = await userService.seguir(req.user._id, idUserToFollow);
             return res.json(response);
         } catch (error) {
             return res.status(error.statusCode || 500).json({message: error.message});
@@ -94,7 +94,6 @@ class UserController{
 
     async dejarDeSeguir(req, res){
         const idUsuarioSeguido = req.params.userId;
-        if(!idUsuarioSeguido) return res.status(400).json({message: 'Faltan datos de input'});
         if(!isValidObjectId(idUsuarioSeguido)) return res.status(400).json({message: 'El id ingresado no posee el formato correcto'});
         try {
             const response = await userService.dejarDeSeguir(req.user._id, idUsuarioSeguido);
@@ -113,9 +112,36 @@ class UserController{
         }
     }
 
+    async esSeguido(req, res){
+        try {
+            const response = await userService.esSeguido(req.user._id, req.params.userId);
+            return res.json(response);
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({message: error.message});
+        }
+    }
+
     async perfilSigueUsuarioLogueado(req, res){
         try {
             const response = await userService.perfilSigueUsuarioLogueado(req.user._id, req.params.userId);
+            return res.json(response);
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({message: error.message});
+        }
+    }
+
+    async getSeguidores(req, res){
+        try {
+            const response = await userService.getSeguidores(req.params.userId, req.query.page ? req.query.page : 1);
+            return res.json(response);
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({message: error.message});
+        }
+    }
+
+    async getSeguidos(req, res){
+        try {
+            const response = await userService.getSeguidos(req.params.userId, req.query.page ? req.query.page : 1);
             return res.json(response);
         } catch (error) {
             return res.status(error.statusCode || 500).json({message: error.message});

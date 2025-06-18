@@ -9,14 +9,14 @@ const userSchema = new mongoose.Schema({
     foto_perfil: {type: String},
     foto_portada: {type: String},
     localidad: {type: String, required: true},
-    seguidos: {type: [ { usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }} ]},
-    seguidores: {type: [ { usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }} ]},
-    //eventos_participados: []
     edad: {type: Number, required: true},
     rol: {type: String, require: true, default: 'basico'},
     esOrganizador: {type: Boolean, require: true, default: false},
     esCompetidor: {type: Boolean, require: true, default: false},
-    created_dt: {type: Date, default: Date.now()}
+    created_dt: {type: Date, default: Date.now()},
+    seguidores: {type: Number, default: 0},
+    seguidos: {type: Number, default: 0}
+
 }, { timestamps: true });
 
 const userModel = mongoose.model(userCollection, userSchema);

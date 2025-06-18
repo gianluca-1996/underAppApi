@@ -3,6 +3,7 @@ import { generateToken } from "../middlewares/auth.js";
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 import AppError from "../utils/error.js";
+import seguimientoDao from "../daos/seguimiento.dao.js";
 
 class UserService{
     async login(email, password){
@@ -14,12 +15,13 @@ class UserService{
             usuario: response.usuario, 
             email: response.email, 
             foto_perfil: response.foto_perfil,
+            foto_portada: response.foto_portada,
             rol: response.rol,
             localidad: response.localidad,
             esOrganizador: response.esOrganizador,
             esCompetidor: response.esCompetidor,
-            seguidos: response.seguidos.length,
-            seguidores: response.seguidores.length
+            seguidos: response.seguidos,
+            seguidores: response.seguidores
         }
         //crea token
         const token = generateToken(user);
@@ -69,16 +71,23 @@ class UserService{
         return {message: 'Usuario Eliminado con éxito'};
     };
 
-    async followUser(_id, idUsuarioASeguir){
-        const usuarioASeguir = await userDao.getUserById(idUsuarioASeguir);
-        if(!usuarioASeguir) throw new AppError('No se ha encontrado el usuario', 404);
-        const esSeguidor = await userDao.esSeguidor(_id, idUsuarioASeguir);
-        if(esSeguidor) throw new AppError('Ya es seguidor de este usuario', 409);
+    async seguir(_id, seguidoId){
+        
+        // si es el mismo usuario informar error
+        if(_id === seguidoId) throw new AppError('Ambos usuarios son iguales', 412);
+        
+        // ya es seguidor de el usuario?
+        const esSeguidor = await seguimientoDao.esSeguidor(_id, seguidoId);
+        if(esSeguidor) throw new AppError('Ya es seguidor de este usuario', 412);
         
         const session = await mongoose.startSession();
         try {
             await session.withTransaction(async () => {
-                await userDao.followUser(_id, usuarioASeguir._id.toString(), session);
+                // 1 - crear el documento, 2 - actualizar el campo de cantidad seguidos del usuario logueado, 
+                // 3 - actualizar el campo cantidad seguidores del usuario a seguir
+                await seguimientoDao.seguir(seguidoId, _id, session);
+                await userDao.actualizarSeguidos(_id, true, session);
+                await userDao.actualizarSeguidores(seguidoId, true, session);
             });
             
             return {message: 'Siguiendo'};
@@ -89,19 +98,22 @@ class UserService{
         }
     };
 
-    async dejarDeSeguir(_id, idUsuarioSeguido){
-        const usuarioSeguido = await userDao.getUserById(idUsuarioSeguido);
-        if(!usuarioSeguido) throw new AppError('No se ha encontrado el usuario', 404);
-        const esSeguidor = await userDao.esSeguidor(_id, idUsuarioSeguido);
-        if(!esSeguidor) throw new AppError('No eres seguidor de este usuario', 409);
+    async dejarDeSeguir(_id, seguidoId){
+        // ya es seguidor del usuario?
+        const esSeguidor = await seguimientoDao.esSeguidor(_id, seguidoId);
+        if(!esSeguidor) throw new AppError('No sigues a este usuario', 412);
         
         const session = await mongoose.startSession();
         try {
             await session.withTransaction(async () => {
-                await userDao.dejarDeSeguir(_id, String(idUsuarioSeguido), session);
+                // 1 - eliminar el documento, 2 - actualizar el campo de cantidad seguidos del usuario logueado,
+                // 3 - actualizar el campo cantidad seguidores del usuario seguido
+                await seguimientoDao.dejarDeseguir(seguidoId, _id, session);
+                await userDao.actualizarSeguidos(_id, false, session);
+                await userDao.actualizarSeguidores(seguidoId, false, session);
             });
             
-            return {message: 'Ha dejado de seguir al usuario'};
+            return {message: 'Dejaste de seguir al usuario'};
         } catch (error) {
             throw new AppError(`Ha ocurrido un error en la base de datos: ${error.message}`, 500);
         }finally{
@@ -109,15 +121,24 @@ class UserService{
         }
     };
 
-    async esSeguidor(_id, userId){
-        const response = await userDao.esSeguidor(_id, userId);
-        return response ? true : false;
-    }
+    async getSeguidores(_id, page){
+        return await seguimientoDao.getSeguidores(_id, page);
+    };
 
-    async perfilSigueUsuarioLogueado(_id, userId){
-        const response = await userDao.perfilSigueUsuarioLogueado(_id, userId);
-        return response ? true : false;
-    }
+    async getSeguidos(_id, page){
+        return await seguimientoDao.getSeguidos(_id, page);
+    };
+
+    async esSeguidor(_id, seguidorId){
+        const esSeguidor = await seguimientoDao.esSeguidor(_id, seguidorId);
+        return esSeguidor ? {esSeguidor: true} : {esSeguidor: false};
+    };
+
+    async esSeguido(_id, seguidorId){
+        const esSeguido = await seguimientoDao.esSeguido(_id, seguidorId);
+        return esSeguido ? {esSeguido: true} : {esSeguido: false};
+    };
+
 }
 
 export default new UserService();
