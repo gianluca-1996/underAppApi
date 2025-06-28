@@ -1,21 +1,32 @@
 import mongoose from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 const coleccionBatalla = 'Batalla';
 const batallatSchema = new mongoose.Schema({
-    nombre: {type: String, require: true},
-    fecha: {type: Date, require: true},
-    ubicacion: {type: String, require: true},
-    localidad: {type: String, index: true, require: true},
-    participantes: {type: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' } ], default: []},
-    premio: {type: String, require: true},
-    organizadorId: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', index: true, require: true},
-    coordenadas: {type: {lat: {type: String}, lng: {type: String}}, require: true},
-    cupoMaximo: {type: Number, require: true},
-    imagen: {type: String, require: false},
-    descripcion: {type: String, require: false},
-    estado: {type: String, require: true, default: 'Programado'},
-    formato: {type: String, require: true}
-});
+    nombre: {type: String, required: true},
+    fecha: {type: Date, required: true},
+    ubicacion: {type: String, required: true},
+    localidad: {type: String, index: true, required: true},
+    participantes: {type: [ { id: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: false}, nombre: {type: String} } ], default: []},
+    premio: {type: String, required: true},
+    organizadorId: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', index: true, required: true},
+    coordenadas: {type: {lat: {type: String}, lng: {type: String}}, required: true},
+    cupoMaximo: {type: Number, required: true},
+    imagen: {type: String, required: false},
+    descripcion: {type: String, required: false},
+    estado: {type: String, required: true, default: 'Programado'}, //Programado, cancelado, terminado
+    formato: {type: String, required: true},
+    ganadorId: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', index: true, required: false},
+    valorInscripcionPlataforma: {type: Number, required: true},
+    valorInscripcionPresencial: {type: Number, required: true},
+    inscripcionAbierta: {type: Boolean},
+    tieneJurados: {type: Boolean},
+    jurados: {type: Array, default: []},
+    comenzadoBl: {type: Boolean, default: false},
+    finalizadoBl: {type: Boolean, default: false}
+}, { timestamps: true });
+
+batallatSchema.plugin(mongoosePaginate);
 
 const batallaModel = mongoose.model(coleccionBatalla, batallatSchema);
 export default batallaModel;
