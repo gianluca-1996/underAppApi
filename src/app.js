@@ -8,6 +8,7 @@ dotenv.config();
 import conectMongodb from './config/mongodb.config.js';
 
 const app = express();
+const port = process.env.PORT;
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cors());
@@ -15,4 +16,4 @@ app.use(bodyParser.json());
 app.use(mainRouter);
 conectMongodb();
 
-app.listen(8080, () => console.log('Servidor escuchando en 8080'));
+app.listen(port, () => console.log(`Servidor escuchando en ${port}`));

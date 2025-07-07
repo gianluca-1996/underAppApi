@@ -47,6 +47,33 @@ class BatallaController{
             res.status(error.statusCode || 500).json({message: error.message});
         }
     }
+
+    async editarBatalla(req, res){
+        try {
+            const batallaId = req.params.batallaId;
+            const { nombre, fecha, ubicacion, localidad, premio, cupoMaximo, descripcion, formato, valorInscripcionPlataforma, valorInscripcionPresencial, inscripcionAbierta} = req.body;
+            if(!isValidObjectId(batallaId)) return res.status(400).json({message: 'El id de batalla especificado no posee el formato correcto'});
+
+            const response = await batallaService.editarBatalla(req.user._id, batallaId, { nombre, fecha, ubicacion, localidad, premio, cupoMaximo, descripcion, formato, valorInscripcionPlataforma, valorInscripcionPresencial, inscripcionAbierta});
+            res.json(response);
+        } catch (error) {
+            res.status(error.statusCode || 500).json({message: error.message});
+        }
+    }
+
+    async editarJurados(req, res){
+        try {
+            const batallaId = req.params.batallaId;
+            const jurados = req.body.jurados;
+    
+            if(!isValidObjectId(batallaId)) return res.status(400).json({message: 'El id de batalla especificado no posee el formato correcto'});
+    
+            const response = await batallaService.editarJurados(req.user._id, batallaId, jurados);
+            res.json(response);
+        } catch (error) {
+            res.status(error.statusCode || 500).json({message: error.message});
+        }
+    }
 }
 
 export default new BatallaController();

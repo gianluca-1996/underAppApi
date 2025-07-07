@@ -8,5 +8,7 @@ batallaRouter.post('/', authToken, batallaController.crearBatalla);
 batallaRouter.get('/', authToken, batallaController.getBatallas);
 batallaRouter.get('/:batallaId', authToken, batallaController.getBatallaDetalle);
 batallaRouter.get('/usuario/:userId', authToken, batallaController.getBatallasUsuario);
+batallaRouter.put('/:batallaId', authToken, batallaController.editarBatalla);
+batallaRouter.put('/jurados/:batallaId', authToken, batallaController.editarJurados);
 
 export default batallaRouter;

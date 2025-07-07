@@ -7,7 +7,8 @@ const batallatSchema = new mongoose.Schema({
     fecha: {type: Date, required: true},
     ubicacion: {type: String, required: true},
     localidad: {type: String, index: true, required: true},
-    participantes: {type: [ { id: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: false}, nombre: {type: String} } ], default: []},
+    participantesRegistrados: {type: [ {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: false} ], default: []},
+    participantesSinRegistrar: {type: Array, default: []},
     premio: {type: String, required: true},
     organizadorId: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', index: true, required: true},
     coordenadas: {type: {lat: {type: String}, lng: {type: String}}, required: true},
@@ -20,7 +21,6 @@ const batallatSchema = new mongoose.Schema({
     valorInscripcionPlataforma: {type: Number, required: true},
     valorInscripcionPresencial: {type: Number, required: true},
     inscripcionAbierta: {type: Boolean},
-    tieneJurados: {type: Boolean},
     jurados: {type: Array, default: []},
     comenzadoBl: {type: Boolean, default: false},
     finalizadoBl: {type: Boolean, default: false}

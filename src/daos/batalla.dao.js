@@ -18,6 +18,14 @@ class BatallaDao{
     async getBatallasUsuario(userId, page){
         return await batallaModel.paginate({organizadorId: userId}, {limit: 5, page, sort: {createdAt: -1}, select: 'nombre fecha ubicacion estado'});
     }
+
+    async editarBatalla(batallaId, batalla){
+        return await batallaModel.findByIdAndUpdate(batallaId, {...batalla}, {returnDocument: 'after'});
+    }
+
+    async editarJurados(batallaId, jurados){
+        return await batallaModel.findByIdAndUpdate(batallaId, {jurados: jurados}, {new: true}).populate('organizadorId', '_id usuario foto_perfil');
+    }
 }
 
 export default new BatallaDao();
