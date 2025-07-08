@@ -7,10 +7,6 @@ dotenv.config();
 
 import conectMongodb from './config/mongodb.config.js';
 
-console.log('process.env.JWT_PRIVATE_KEY: ', process.env.JWT_PRIVATE_KEY);
-console.log('process.env.MONGO_DB_DRIVER: ', process.env.MONGO_DB_DRIVER);
-console.log('process.env.PORT: ', process.env.PORT);
-
 const app = express();
 const port = process.env.PORT;
 app.use(express.urlencoded({extended: true}));

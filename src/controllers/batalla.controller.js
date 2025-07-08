@@ -51,10 +51,10 @@ class BatallaController{
     async editarBatalla(req, res){
         try {
             const batallaId = req.params.batallaId;
-            const { nombre, fecha, ubicacion, localidad, premio, cupoMaximo, descripcion, formato, valorInscripcionPlataforma, valorInscripcionPresencial, inscripcionAbierta} = req.body;
+            const { nombre, fecha, ubicacion, localidad, premio, cupoMaximo, descripcion, formato, valorInscripcionPlataforma, valorInscripcionPresencial} = req.body;
             if(!isValidObjectId(batallaId)) return res.status(400).json({message: 'El id de batalla especificado no posee el formato correcto'});
 
-            const response = await batallaService.editarBatalla(req.user._id, batallaId, { nombre, fecha, ubicacion, localidad, premio, cupoMaximo, descripcion, formato, valorInscripcionPlataforma, valorInscripcionPresencial, inscripcionAbierta});
+            const response = await batallaService.editarBatalla(req.user._id, batallaId, { nombre, fecha, ubicacion, localidad, premio, cupoMaximo, descripcion, formato, valorInscripcionPlataforma, valorInscripcionPresencial});
             res.json(response);
         } catch (error) {
             res.status(error.statusCode || 500).json({message: error.message});

@@ -20,7 +20,7 @@ class BatallaDao{
     }
 
     async editarBatalla(batallaId, batalla){
-        return await batallaModel.findByIdAndUpdate(batallaId, {...batalla}, {returnDocument: 'after'});
+        return await batallaModel.findByIdAndUpdate(batallaId, {...batalla}, {new: true}).populate('organizadorId', '_id usuario foto_perfil');
     }
 
     async editarJurados(batallaId, jurados){
